@@ -86,17 +86,7 @@ async def handle_nse_bootstrap_response(buf, reader, writer):
 
     estimate = struct.unpack(">QI", packed_data)[1]
 
-    # asserting that the estimate sent by the nse is the one of the last round
-    async with HISTORY_LOCK:
-        last_estimate = NSE_HISTORY_QUEUE[len(NSE_HISTORY_QUEUE) - 1]
-        if last_estimate is None:
-            last_estimate = NSE_HISTORY_QUEUE[len(NSE_HISTORY_QUEUE) - 2]
-
-    try:
-        assert estimate == last_estimate
-        print(f"[Test] Bootstrap response with correct estimate {estimate} received")
-    except AssertionError as e:
-        print(f"[Test] Bootstrap response with incorrect estimate {estimate} received, expected {last_estimate}: {e}")
+    print(f"[Test] Bootstrap response with estimate {estimate} received")
 
 
 async def handle_nse_bootstrap_request(buf, reader, writer):
@@ -438,7 +428,6 @@ async def testing_round_coro(nse_addr, nse_port, goss_reader, goss_writer, boot_
     pyplot.plot(range(1, len(PEER_LIST) + 1), PEER_LIST, label="Actual Peers")
     pyplot.xlabel("Rounds")
     pyplot.legend()
-    pyplot.show()
     pyplot.savefig("chart.png")
 
     print(

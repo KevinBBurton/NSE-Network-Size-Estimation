@@ -60,14 +60,8 @@ async def handle_nse_query(buf, reader, writer):
                          estimate,
                          std_deviation)
     async with WRITER_LOCK:
-        try:
-            writer.write(answer)
-            await writer.drain()
-        except Exception as e:
-            print(f"[NSE] Failed to send NSE_ESTIMATE: {e}")
-            writer.close()
-            await writer.wait_closed()
-            return
+        writer.write(answer)
+        await writer.drain()
 
     print(f"[NSE] {raddr}:{rport} <<< NSE_ESTIMATE(Estimate: {estimate}, Std deviation: {std_deviation})")
 
